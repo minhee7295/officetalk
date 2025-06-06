@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -8,13 +8,13 @@ import {
   Menu,
   Select,
   SelectChangeEvent,
-} from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import SearchBar from "./SearchBar";
-import { useRouter } from "next/router";
-import useLogout from "@/hooks/useLogout";
-import { HeaderProps } from "@/inteface/item.interface";
-import useCategories from "@/hooks/useCategories";
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import SearchBar from './SearchBar';
+import { useRouter } from 'next/router';
+import useLogout from '@/hooks/useLogout';
+import { HeaderProps, SessionUser } from '@/inteface/item.interface';
+import useCategories from '@/hooks/useCategories';
 
 export default function Header({ onSearch, onCategoryChange }: HeaderProps) {
   const [menu, setMenu] = useState<null | HTMLElement>(null);
@@ -23,7 +23,8 @@ export default function Header({ onSearch, onCategoryChange }: HeaderProps) {
   const logout = useLogout();
 
   const { categories } = useCategories();
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setMenu(event.currentTarget);
@@ -34,7 +35,7 @@ export default function Header({ onSearch, onCategoryChange }: HeaderProps) {
   };
 
   const handleWrite = () => {
-    router.push("/post/new");
+    router.push('/post/new');
     handleMenuClose();
   };
 
@@ -45,9 +46,18 @@ export default function Header({ onSearch, onCategoryChange }: HeaderProps) {
   };
 
   useEffect(() => {
-    const user = sessionStorage.getItem("session-user");
-    if (!user) router.push("/login");
-  }, []);
+    const user = sessionStorage.getItem('session-user');
+    if (!user) {
+      router.push('/login');
+    } else {
+      try {
+        const parsed: SessionUser = JSON.parse(user);
+        setIsAdmin(parsed.role === 'admin');
+      } catch {
+        router.push('/login');
+      }
+    }
+  }, [router]);
 
   return (
     <AppBar position="static">
@@ -66,7 +76,7 @@ export default function Header({ onSearch, onCategoryChange }: HeaderProps) {
           variant="h6"
           noWrap
           component="div"
-          sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+          sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
         >
           Office Talk
         </Typography>
@@ -76,13 +86,13 @@ export default function Header({ onSearch, onCategoryChange }: HeaderProps) {
           onChange={handleCategoryChange}
           displayEmpty
           sx={{
-            color: "white",
+            color: 'white',
             minWidth: 120,
-            borderBottom: "1px solid white",
+            borderBottom: '1px solid white',
           }}
         >
           <MenuItem value="">전체</MenuItem>
-          {categories.map((cat) => (
+          {categories.map(cat => (
             <MenuItem key={cat} value={cat}>
               {cat}
             </MenuItem>
@@ -94,31 +104,36 @@ export default function Header({ onSearch, onCategoryChange }: HeaderProps) {
           open={open}
           onClose={handleMenuClose}
           anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "left",
+            vertical: 'bottom',
+            horizontal: 'left',
           }}
           transformOrigin={{
-            vertical: "top",
-            horizontal: "left",
+            vertical: 'top',
+            horizontal: 'left',
           }}
         >
           <MenuItem onClick={handleWrite}>글쓰기</MenuItem>
           <MenuItem
             onClick={() => {
-              router.push("/mypage");
+              router.push('/mypage');
               handleMenuClose();
             }}
           >
             좋아요 페이지
           </MenuItem>
-          <MenuItem
+
+          {isAdmin && (
+            <MenuItem
             onClick={() => {
-              router.push("/users");
+              router.push('/users');
               handleMenuClose();
             }}
           >
             유저 보기
           </MenuItem>
+            
+          )}
+          
           <MenuItem onClick={logout}>로그아웃</MenuItem>
         </Menu>
       </Toolbar>

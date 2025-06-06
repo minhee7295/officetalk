@@ -1,12 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  const isLoggedIn = request.cookies.get("session-user");
+  const isLoggedIn = request.cookies.get('session-user');
 
-  const isProtectedPath = request.nextUrl.pathname === "/";
+  const isProtectedPath = request.nextUrl.pathname === '/';
 
   if (isProtectedPath && !isLoggedIn) {
-    const loginUrl = new URL("/login", request.url);
+    const loginUrl = new URL('/login', request.url);
     return NextResponse.redirect(loginUrl);
   }
 
@@ -14,5 +14,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/"], // 보호할 경로
+  matcher: ['/', '/list', '/post/:path*'], // 보호할 경로
 };

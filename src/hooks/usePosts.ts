@@ -1,6 +1,6 @@
-import useSWR from "swr";
-import { supabase } from "@/lib/supabase";
-import { IPostData } from "@/inteface/item.interface";
+import useSWR from 'swr';
+import { supabase } from '@/lib/supabase';
+import { IPostData } from '@/inteface/item.interface';
 
 const fetcher = async (
   _: string,
@@ -12,9 +12,9 @@ const fetcher = async (
   const to = page * 10 - 1;
 
   let query = supabase
-    .from("posts")
-    .select("*, comments(id), likes(count)")
-    .order("reg_dt", { ascending: false })
+    .from('posts')
+    .select('*, comments(id), likes(count)')
+    .order('reg_dt', { ascending: false })
     .range(from, to);
 
   if (search) {
@@ -22,7 +22,7 @@ const fetcher = async (
   }
 
   if (category) {
-    query = query.eq("category", category);
+    query = query.eq('category', category);
   }
 
   const { data, error } = await query;
@@ -35,14 +35,10 @@ const fetcher = async (
   }));
 };
 
-export default function usePosts(
-  page: number,
-  search: string,
-  category: string
-) {
+export default function usePosts(page: number, search: string, category: string) {
   const { data, error, isLoading } = useSWR(
-    ["posts", page, search, category],
-    ([, p, s, c]) => fetcher("posts", p, s, c),
+    ['posts', page, search, category],
+    ([, p, s, c]) => fetcher('posts', p, s, c),
     { revalidateOnFocus: true }
   );
 

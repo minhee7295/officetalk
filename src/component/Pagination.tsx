@@ -1,4 +1,4 @@
-import { Pagination } from "@mui/material";
+import { Pagination } from '@mui/material';
 
 interface Props {
   currentPage: number;
@@ -23,7 +23,7 @@ export default function PaginationBlock({
       shape="rounded"
       showFirstButton
       showLastButton
-      sx={{ mt: 2, display: "flex", justifyContent: "center" }}
+      sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}
     />
   );
 }

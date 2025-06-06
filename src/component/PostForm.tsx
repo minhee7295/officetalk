@@ -1,24 +1,17 @@
-import {
-  Box,
-  Button,
-  TextField,
-  MenuItem,
-  Typography,
-  CircularProgress,
-} from "@mui/material";
-import { useForm, Controller } from "react-hook-form";
-import useCreatePost from "@/hooks/useCreatePost";
-import { useRouter } from "next/router";
-import useCategories from "@/hooks/useCategories";
-import { PostFormInput } from "@/inteface/item.interface";
-import { useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { Box, Button, TextField, MenuItem, Typography, CircularProgress } from '@mui/material';
+import { useForm, Controller } from 'react-hook-form';
+import useCreatePost from '@/hooks/useCreatePost';
+import { useRouter } from 'next/router';
+import useCategories from '@/hooks/useCategories';
+import { PostFormInput } from '@/inteface/item.interface';
+import { useState } from 'react';
+import { supabase } from '@/lib/supabase';
 
 interface PostFormProps {
   userId: string;
 }
 
-type FormValues = Pick<PostFormInput, "title" | "category" | "content">;
+type FormValues = Pick<PostFormInput, 'title' | 'category' | 'content'>;
 
 export default function PostForm({ userId }: PostFormProps) {
   const { createPost, loading, error } = useCreatePost();
@@ -34,9 +27,9 @@ export default function PostForm({ userId }: PostFormProps) {
     formState: { errors },
   } = useForm<FormValues>({
     defaultValues: {
-      title: "",
-      content: "",
-      category: "",
+      title: '',
+      content: '',
+      category: '',
     },
   });
 
@@ -52,21 +45,17 @@ export default function PostForm({ userId }: PostFormProps) {
     if (!imageFile) return null;
     setUploading(true);
     const fileName = `${Date.now()}-${imageFile.name}`;
-    const { error } = await supabase.storage
-      .from("post-images")
-      .upload(fileName, imageFile);
+    const { error } = await supabase.storage.from('post-images').upload(fileName, imageFile);
 
     setUploading(false);
 
     if (error) {
-      console.error("이미지 업로드 실패:", error.message);
+      console.error('이미지 업로드 실패:', error.message);
       return null;
     }
 
-    const { data } = supabase.storage
-      .from("post-images")
-      .getPublicUrl(fileName);
-    console.log("🖼️ getPublicUrl 결과:", data);
+    const { data } = supabase.storage.from('post-images').getPublicUrl(fileName);
+    console.log('🖼️ getPublicUrl 결과:', data);
     return data?.publicUrl ?? null;
   };
 
@@ -85,7 +74,7 @@ export default function PostForm({ userId }: PostFormProps) {
   };
 
   return (
-    <Box sx={{ maxWidth: 600, mx: "auto", mt: 4 }}>
+    <Box sx={{ maxWidth: 600, mx: 'auto', mt: 4 }}>
       <Typography variant="h5" gutterBottom>
         게시글 작성
       </Typography>
@@ -93,7 +82,7 @@ export default function PostForm({ userId }: PostFormProps) {
       <Controller
         name="title"
         control={control}
-        rules={{ required: "제목을 입력해주세요." }}
+        rules={{ required: '제목을 입력해주세요.' }}
         render={({ field }) => (
           <TextField
             {...field}
@@ -109,7 +98,7 @@ export default function PostForm({ userId }: PostFormProps) {
       <Controller
         name="category"
         control={control}
-        rules={{ required: "카테고리를 선택해주세요." }}
+        rules={{ required: '카테고리를 선택해주세요.' }}
         render={({ field }) => (
           <TextField
             select
@@ -123,7 +112,7 @@ export default function PostForm({ userId }: PostFormProps) {
             {categoryLoading ? (
               <MenuItem disabled>불러오는 중...</MenuItem>
             ) : (
-              categories.map((cat) => (
+              categories.map(cat => (
                 <MenuItem key={cat} value={cat}>
                   {cat}
                 </MenuItem>
@@ -136,7 +125,7 @@ export default function PostForm({ userId }: PostFormProps) {
       <Controller
         name="content"
         control={control}
-        rules={{ required: "내용을 입력해주세요." }}
+        rules={{ required: '내용을 입력해주세요.' }}
         render={({ field }) => (
           <TextField
             {...field}
@@ -155,7 +144,7 @@ export default function PostForm({ userId }: PostFormProps) {
         <input type="file" accept="image/*" onChange={handleImageChange} />
         {previewUrl && (
           <Box mt={1}>
-            <img src={previewUrl} alt="미리보기" style={{ maxWidth: "100%" }} />
+            <img src={previewUrl} alt="미리보기" style={{ maxWidth: '100%' }} />
           </Box>
         )}
         {uploading && <CircularProgress size={24} />}

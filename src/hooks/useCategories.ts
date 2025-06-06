@@ -1,5 +1,5 @@
-import { supabase } from "@/lib/supabase";
-import { useEffect, useState } from "react";
+import { supabase } from '@/lib/supabase';
+import { useEffect, useState } from 'react';
 
 export default function useCategories() {
   const [categories, setCategories] = useState<string[]>([]);
@@ -7,12 +7,10 @@ export default function useCategories() {
 
   useEffect(() => {
     const fetchCategories = async () => {
-      const { data, error } = await supabase.from("posts").select("category");
+      const { data, error } = await supabase.from('posts').select('category');
 
       if (!error && data) {
-        const itemCategory = Array.from(
-          new Set(data.map((item) => item.category))
-        );
+        const itemCategory = Array.from(new Set(data.map(item => item.category)));
         setCategories(itemCategory);
       }
       setLoading(false);

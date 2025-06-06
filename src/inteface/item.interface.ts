@@ -36,5 +36,5 @@ export interface SessionUser {
   id: string;
   email: string;
   nickname: string;
-  role: "user" | "admin";
+  role: 'user' | 'admin';
 }

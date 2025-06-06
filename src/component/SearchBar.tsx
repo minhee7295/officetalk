@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
 
 interface SearchBarProps {
-  onSearch : (value : string) => void;
+  onSearch: (value: string) => void;
 }
 
 const Search = styled('div')(({ theme }) => ({
@@ -48,7 +48,17 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function SearchBar({onSearch}:SearchBarProps) {
+export default function SearchBar({ onSearch }: SearchBarProps) {
+  const [input, setInput] = useState<string>('');
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onSearch(input);
+    }, 500); // 0.5초
+
+    return () => clearTimeout(timer); // 입력할때 호출 x
+  }, [input, onSearch]);
+
   return (
     <Search>
       <SearchIconWrapper>
@@ -57,7 +67,8 @@ export default function SearchBar({onSearch}:SearchBarProps) {
       <StyledInputBase
         placeholder="Search…"
         inputProps={{ 'aria-label': 'search' }}
-        onChange={(e) => onSearch(e.target.value)}
+        value={input}
+        onChange={e => setInput(e.target.value)}
       />
     </Search>
   );
