@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 
 export default function usePostLike(postId: string, userId?: string) {
   const [liked, setLiked] = useState(false);
@@ -11,17 +11,17 @@ export default function usePostLike(postId: string, userId?: string) {
 
   const fetchLikeInfo = async () => {
     const { count } = await supabase
-      .from('likes')
-      .select('*', { count: 'exact', head: true })
-      .eq('post_id', postId);
+      .from("likes")
+      .select("*", { count: "exact", head: true })
+      .eq("post_id", postId);
     setLikeCount(count || 0);
 
     if (userId) {
       const { data } = await supabase
-        .from('likes')
-        .select('id')
-        .eq('post_id', postId)
-        .eq('user_id', userId)
+        .from("likes")
+        .select("id")
+        .eq("post_id", postId)
+        .eq("user_id", userId)
         .maybeSingle();
       setLiked(!!data);
     }
@@ -31,18 +31,24 @@ export default function usePostLike(postId: string, userId?: string) {
     if (!userId) return;
 
     if (liked) {
-      await supabase.from('likes').delete().eq('user_id', userId).eq('post_id', postId);
       await supabase
-        .from('posts')
-        .update({ like_count: (likeCount - 1) })
-        .eq('id', postId);
+        .from("likes")
+        .delete()
+        .eq("user_id", userId)
+        .eq("post_id", postId);
+      await supabase
+        .from("posts")
+        .update({ like_count: likeCount - 1 })
+        .eq("id", postId);
     } else {
-      const { error } = await supabase.from('likes').insert({ user_id: userId, post_id: postId });
-      if (!error || error.code === '23505') {
+      const { error } = await supabase
+        .from("likes")
+        .insert({ user_id: userId, post_id: postId });
+      if (!error || error.code === "23505") {
         await supabase
-          .from('posts')
-          .update({ like_count: (likeCount + 1) })
-          .eq('id', postId);
+          .from("posts")
+          .update({ like_count: likeCount + 1 })
+          .eq("id", postId);
       }
     }
 

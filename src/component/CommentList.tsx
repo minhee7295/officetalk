@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
-import { Box, Typography } from '@mui/material';
-import {Comment} from '../inteface/item.interface';
-import useSessionUser from '@/hooks/useSessionUser';
-import CommentItem from './CommentItem';
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import { Box, Typography } from "@mui/material";
+import { Comment } from "../inteface/item.interface";
+import useSessionUser from "@/hooks/useSessionUser";
+import CommentItem from "./CommentItem";
 
 interface CommentListProps {
   postId: string;
@@ -18,10 +18,10 @@ export default function CommentList({ postId }: CommentListProps) {
   const fetchComments = async () => {
     if (!postId) return;
     const { data, error } = await supabase
-      .from('comments')
-      .select('*, users(nickname)')
-      .eq('post_id', postId)
-      .order('reg_dt', { ascending: true });
+      .from("comments")
+      .select("*, users(nickname)")
+      .eq("post_id", postId)
+      .order("reg_dt", { ascending: true });
 
     if (!error) setComments(data || []);
     setLoading(false);
@@ -42,7 +42,7 @@ export default function CommentList({ postId }: CommentListProps) {
       ) : comments.length === 0 ? (
         <Typography color="text.secondary">아직 댓글이 없습니다.</Typography>
       ) : (
-        comments.map(comment => (
+        comments.map((comment) => (
           <CommentItem
             key={comment.id}
             comment={comment}

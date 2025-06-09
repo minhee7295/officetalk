@@ -1,13 +1,14 @@
-import PostForm from '@/component/PostForm';
-import { Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+import PostForm from "@/component/PostForm";
+import { SessionUser } from "@/inteface/item.interface";
+import { Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 
 export default function NewPostPage() {
-  const [sessionUser, setSessionUser] = useState<any>(null);
+  const [sessionUser, setSessionUser] = useState<SessionUser>();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const user = sessionStorage.getItem('session-user');
+    const user = sessionStorage.getItem("session-user");
     if (user) setSessionUser(JSON.parse(user));
     setLoading(false);
   }, []);

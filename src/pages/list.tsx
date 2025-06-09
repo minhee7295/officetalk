@@ -1,5 +1,5 @@
-import usePosts from '@/hooks/usePosts';
-import Header from '@/component/Header';
+import usePosts from "@/hooks/usePosts";
+import Header from "@/component/Header";
 import {
   Box,
   TableContainer,
@@ -12,51 +12,51 @@ import {
   Typography,
   Pagination,
   Button,
-} from '@mui/material';
-import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
-import { useRouter } from 'next/router';
+} from "@mui/material";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/router";
 
 export default function ListPage() {
   const [page, setPage] = useState<number>(1);
   const [totalCount, setTotalCount] = useState<number>(0);
-  const [search, setSearch] = useState<string>('');
-  const [category, setCategory] = useState<string>('');
+  const [search, setSearch] = useState<string>("");
+  const [category, setCategory] = useState<string>("");
   const { posts, isLoading, isError } = usePosts(page, search, category);
 
   const handleSearch = (value: string) => {
     setSearch(value);
-    setPage(1);
   };
 
   const handleCategoryChange = (value: string) => {
     setCategory(value);
-    setPage(1);
   };
 
-  const filteredPosts = category ? posts.filter(post => post.category === category) : posts;
+  const filteredPosts = category
+    ? posts.filter((post) => post.category === category)
+    : posts;
 
   useEffect(() => {
-  const fetchTotalCount = async () => {
-    let query = supabase
-      .from('posts')
-      .select('*', { count: 'exact', head: true });
+    const fetchTotalCount = async () => {
+      let query = supabase
+        .from("posts")
+        .select("*", { count: "exact", head: true });
 
-    if (search) {
-      query = query.or(`title.ilike.%${search}%,content.ilike.%${search}%`);
-    }
+      if (search) {
+        query = query.or(`title.ilike.%${search}%,content.ilike.%${search}%`);
+      }
 
-    if (category) {
-      query = query.eq('category', category);
-    }
+      if (category) {
+        query = query.eq("category", category);
+      }
 
-    const { count, error } = await query;
+      const { count, error } = await query;
 
-    if (!error && count !== null) setTotalCount(count);
-  };
+      if (!error && count !== null) setTotalCount(count);
+    };
 
-  fetchTotalCount();
-}, [search, category]);
+    fetchTotalCount();
+  }, [search, category]);
 
   const totalPages = Math.ceil(totalCount / 10);
   const router = useRouter();
@@ -85,12 +85,14 @@ export default function ListPage() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredPosts.map(post => (
+                {filteredPosts.map((post) => (
                   <TableRow key={post.id}>
                     <TableCell>{post.title}</TableCell>
                     <TableCell>{post.category}</TableCell>
                     <TableCell>{post.content.slice(0, 30)}...</TableCell>
-                    <TableCell>{new Date(post.reg_dt).toLocaleDateString()}</TableCell>
+                    <TableCell>
+                      {new Date(post.reg_dt).toLocaleDateString()}
+                    </TableCell>
                     <TableCell>{post.comment_count}</TableCell>
                     <TableCell>{post.like_count}</TableCell>
                     <TableCell>
@@ -116,7 +118,7 @@ export default function ListPage() {
               shape="rounded"
               showFirstButton
               showLastButton
-              sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}
+              sx={{ mt: 3, display: "flex", justifyContent: "center" }}
             />
           )}
         </>

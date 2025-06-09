@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { supabase } from '@/lib/supabase';
-import { PostFormInput } from '@/inteface/item.interface';
+import { useState } from "react";
+import { supabase } from "@/lib/supabase";
+import { PostFormInput } from "@/inteface/item.interface";
 
 export default function useCreatePost() {
   const [loading, setLoading] = useState(false);
@@ -13,7 +13,7 @@ export default function useCreatePost() {
     const { title, content, category, image_url, userId } = postData;
 
     const { data, error: insertError } = await supabase
-      .from('posts')
+      .from("posts")
       .insert({
         title,
         content,

@@ -6,8 +6,8 @@ import {
   TableCell,
   TableBody,
   Paper,
-} from '@mui/material';
-import { IPostData } from '../inteface/item.interface';
+} from "@mui/material";
+import { IPostData } from "../inteface/item.interface";
 
 interface IPostTable {
   posts: IPostData[];
@@ -31,7 +31,9 @@ export default function PostTable({ posts }: IPostTable) {
               <TableCell>{post.title}</TableCell>
               <TableCell>{post.category}</TableCell>
               <TableCell>{post.content.slice(0, 30)}...</TableCell>
-              <TableCell>{new Date(post.reg_dt).toLocaleDateString()}</TableCell>
+              <TableCell>
+                {new Date(post.reg_dt).toLocaleDateString()}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

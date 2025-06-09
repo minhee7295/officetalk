@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabase } from "@/lib/supabase";
 import {
   Box,
   Button,
@@ -10,10 +10,10 @@ import {
   TableHead,
   TableRow,
   Typography,
-  CardActions
-} from '@mui/material';
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+  CardActions,
+} from "@mui/material";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 export default function MyPage() {
   const [posts, setPosts] = useState<any[]>([]);
@@ -21,9 +21,9 @@ export default function MyPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const user = sessionStorage.getItem('session-user');
+    const user = sessionStorage.getItem("session-user");
     if (!user) {
-      router.push('/login');
+      router.push("/login");
     } else {
       setSessionUser(JSON.parse(user));
     }
@@ -34,12 +34,12 @@ export default function MyPage() {
       if (!sessionUser?.id) return;
 
       const { data, error } = await supabase
-        .from('likes')
-        .select('post_id, posts(*)')
-        .eq('user_id', sessionUser.id);
+        .from("likes")
+        .select("post_id, posts(*)")
+        .eq("user_id", sessionUser.id);
 
       if (!error && data) {
-        const likedPosts = data.map(item => item.posts);
+        const likedPosts = data.map((item) => item.posts);
         setPosts(likedPosts);
       }
     };
@@ -52,7 +52,7 @@ export default function MyPage() {
   return (
     <Box sx={{ p: 4 }}>
       <Box>
-        <Button size="small" onClick={() => router.push('/list')}>
+        <Button size="small" onClick={() => router.push("/list")}>
           뒤로가기
         </Button>
       </Box>
@@ -74,13 +74,18 @@ export default function MyPage() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {posts.map(post => (
+              {posts.map((post) => (
                 <TableRow key={post.id}>
                   <TableCell>{post.title}</TableCell>
                   <TableCell>{post.category}</TableCell>
-                  <TableCell>{new Date(post.reg_dt).toLocaleDateString()}</TableCell>
                   <TableCell>
-                    <Button size="small" onClick={() => router.push(`/post/${post.id}`)}>
+                    {new Date(post.reg_dt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      size="small"
+                      onClick={() => router.push(`/post/${post.id}`)}
+                    >
                       상세보기
                     </Button>
                   </TableCell>
