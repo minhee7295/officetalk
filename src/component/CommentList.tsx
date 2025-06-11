@@ -1,5 +1,4 @@
 import { Box, Typography } from "@mui/material";
-import useSessionUser from "@/hooks/useSessionUser";
 import CommentItem from "./CommentItem";
 import { Comment } from "../inteface/item.interface";
 import { SessionUser } from "@/inteface/item.interface";

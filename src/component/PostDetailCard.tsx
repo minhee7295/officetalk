@@ -16,16 +16,21 @@ import CommentList from "@/component/CommentList";
 import CommentForm from "@/component/CommentForm";
 import PostActions from "@/component/PostActions";
 import { PostDetail } from "@/hooks/usePostDetail";
-import useSessionUser from "@/hooks/useSessionUser";
+import { SessionUser } from "@/inteface/item.interface";
 import useComments from "@/hooks/useComments";
 
-export default function PostDetailCard({ post }: { post: PostDetail }) {
-  const router = useRouter();
-  const { user: sessionUser } = useSessionUser();
-  const likeHook = usePostLike(post.id, sessionUser?.id ?? "");
-  const { comments, loading, error, refresh } = useComments(post.id);
+interface PostDetailCardProps {
+  post: PostDetail;
+  sessionUser: SessionUser;
+}
 
-  if (!sessionUser) return null;
+export default function PostDetailCard({
+  post,
+  sessionUser,
+}: PostDetailCardProps) {
+  const router = useRouter();
+  const likeHook = usePostLike(post.id, sessionUser.id);
+  const { comments, loading, error, refresh } = useComments(post.id);
 
   const handleDelete = async () => {
     const confirm = window.confirm("정말 삭제하시겠습니까?");
@@ -53,6 +58,7 @@ export default function PostDetailCard({ post }: { post: PostDetail }) {
         <Typography variant="body2" sx={{ mb: 1 }}>
           카테고리: {post.category} / 작성자: {post.users?.nickname}
         </Typography>
+
         {post.image_url && (
           <CardMedia
             component="img"
@@ -61,7 +67,9 @@ export default function PostDetailCard({ post }: { post: PostDetail }) {
             sx={{ objectFit: "cover" }}
           />
         )}
+
         <Typography>{post.content}</Typography>
+
         <Box display="flex" alignItems="center" mt={2}>
           <IconButton
             onClick={likeHook.toggleLike}
@@ -84,6 +92,7 @@ export default function PostDetailCard({ post }: { post: PostDetail }) {
           onRefresh={refresh}
           sessionUser={sessionUser}
         />
+
         <CommentForm
           postId={post.id}
           userId={sessionUser.id}
@@ -94,6 +103,7 @@ export default function PostDetailCard({ post }: { post: PostDetail }) {
           <PostActions postId={post.id} onDelete={handleDelete} />
         )}
       </CardContent>
+
       <CardActions>
         <Button onClick={() => router.push("/list")}>뒤로가기</Button>
       </CardActions>
