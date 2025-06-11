@@ -24,7 +24,7 @@ export interface PostFormInput {
   content: string;
   category: string;
   image_url?: string;
-  userId: string;
+  user_id: string;
 }
 
 export interface HeaderProps {
@@ -36,5 +36,5 @@ export interface SessionUser {
   id: string;
   email: string;
   nickname: string;
-  role: 'user' | 'admin';
+  role: "user" | "admin";
 }

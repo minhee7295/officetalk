@@ -14,7 +14,7 @@ export default function PostActions({ postId, onDelete }: PostActionsProps) {
       <Button
         variant="outlined"
         size="small"
-        onClick={() => router.push(`/edit/${postId}`)}
+        onClick={() => router.push(`/post/${postId}/edit`)}
       >
         수정
       </Button>

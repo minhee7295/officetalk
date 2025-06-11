@@ -10,7 +10,6 @@ import {
   TableHead,
   TableRow,
   Typography,
-  CardActions,
 } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";

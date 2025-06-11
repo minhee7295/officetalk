@@ -35,7 +35,7 @@ export default function Header({ onSearch, onCategoryChange }: HeaderProps) {
   };
 
   const handleWrite = () => {
-    router.push("/post/new");
+    router.push("/write");
     handleMenuClose();
   };
 

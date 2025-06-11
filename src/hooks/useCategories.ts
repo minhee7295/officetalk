@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 export default function useCategories() {
   const [categories, setCategories] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchCategories = async () => {

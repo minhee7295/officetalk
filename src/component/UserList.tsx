@@ -13,10 +13,16 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/router";
 
+interface UserInfo {
+  id: string;
+  nickname: string;
+  email: string;
+}
+
 export default function UserList() {
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<UserInfo[]>([]);
   const [search, setSearch] = useState("");
-  const [selectedUser, setSelectedUser] = useState<any | null>(null);
+  const [selectedUser, setSelectedUser] = useState<UserInfo | null>(null);
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
@@ -25,8 +31,10 @@ export default function UserList() {
       const { data, error } = await supabase
         .from("users")
         .select("id, nickname, email");
+
       if (!error && data) setUsers(data);
     };
+
     fetchUsers();
   }, []);
 

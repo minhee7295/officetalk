@@ -7,38 +7,61 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
-import useCreatePost from "@/hooks/useCreatePost";
-import { useRouter } from "next/router";
 import useCategories from "@/hooks/useCategories";
 import { PostFormInput } from "@/inteface/item.interface";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { v4 as uuidv4 } from "uuid";
 
-interface PostFormProps {
-  userId: string;
+interface FormValues {
+  title: string;
+  category: string;
+  content: string;
 }
 
-type FormValues = Pick<PostFormInput, "title" | "category" | "content">;
+interface PostFormProps {
+  mode: "create" | "edit";
+  userId: string;
+  initialData?: Partial<PostFormInput>;
+  onSubmit: (data: PostFormInput) => Promise<void>;
+  loading?: boolean;
+}
 
-export default function PostForm({ userId }: PostFormProps) {
-  const { createPost, loading, error } = useCreatePost();
-  const { categories, loading: categoryLoading } = useCategories();
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const router = useRouter();
-
+export default function PostForm({
+  mode,
+  userId,
+  initialData,
+  onSubmit,
+  loading = false,
+}: PostFormProps) {
   const {
     handleSubmit,
     control,
     formState: { errors },
+    reset,
   } = useForm<FormValues>({
     defaultValues: {
-      title: "",
-      content: "",
-      category: "",
+      title: initialData?.title || "",
+      category: initialData?.category || "",
+      content: initialData?.content || "",
     },
   });
+
+  const { categories, loading: categoryLoading } = useCategories();
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(
+    initialData?.image_url ?? null
+  );
+  const [uploading, setUploading] = useState(false);
+
+  useEffect(() => {
+    reset({
+      title: initialData?.title || "",
+      category: initialData?.category || "",
+      content: initialData?.content || "",
+    });
+    setPreviewUrl(initialData?.image_url ?? null);
+  }, [initialData, reset]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -51,41 +74,47 @@ export default function PostForm({ userId }: PostFormProps) {
   const uploadImageToSupabase = async (): Promise<string | null> => {
     if (!imageFile) return null;
     setUploading(true);
-    const fileName = `${Date.now()}-${imageFile.name}`;
+
+    const ext = imageFile.name.split(".").pop();
+    const fileName = `${Date.now()}-${uuidv4()}.${ext}`;
+
     const { error } = await supabase.storage
       .from("post-images")
-      .upload(fileName, imageFile);
+      .upload(fileName, imageFile, {
+        upsert: true,
+        contentType: imageFile.type,
+      });
 
     setUploading(false);
 
     if (error) {
+      console.error("이미지 업로드 실패:", error.message);
       return null;
     }
 
     const { data } = supabase.storage
       .from("post-images")
       .getPublicUrl(fileName);
+
     return data?.publicUrl ?? null;
   };
 
-  const onSubmit = async (data: FormValues) => {
+  const handleFinalSubmit = async (from: FormValues) => {
     const imageUrl = await uploadImageToSupabase();
 
-    const postData: PostFormInput = {
-      ...data,
+    const postData = {
+      ...from,
+      user_id: userId,
       image_url: imageUrl ?? undefined,
-      userId,
     };
 
-    const newPost = await createPost(postData);
-
-    if (newPost) router.push(`/post/${newPost.id}`);
+    await onSubmit(postData);
   };
 
   return (
     <Box sx={{ maxWidth: 600, mx: "auto", mt: 4 }}>
       <Typography variant="h5" gutterBottom>
-        게시글 작성
+        게시글 {mode === "create" ? "작성" : "수정"}
       </Typography>
 
       <Controller
@@ -110,11 +139,11 @@ export default function PostForm({ userId }: PostFormProps) {
         rules={{ required: "카테고리를 선택해주세요." }}
         render={({ field }) => (
           <TextField
+            {...field}
             select
             fullWidth
             label="카테고리"
             margin="normal"
-            {...field}
             error={!!errors.category}
             helperText={errors.category?.message}
           >
@@ -159,15 +188,13 @@ export default function PostForm({ userId }: PostFormProps) {
         {uploading && <CircularProgress size={24} />}
       </Box>
 
-      {error && <Typography color="error">{error}</Typography>}
-
       <Box mt={2} display="flex" justifyContent="flex-end">
         <Button
           variant="contained"
-          onClick={handleSubmit(onSubmit)}
+          onClick={handleSubmit(handleFinalSubmit)}
           disabled={loading || uploading}
         >
-          등록
+          {mode === "create" ? "등록" : "수정"}
         </Button>
       </Box>
     </Box>

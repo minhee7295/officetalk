@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import useCommentActions from "@/hooks/useCommentActions";
 import { Box, TextField, Button } from "@mui/material";
 import { useState } from "react";
 
@@ -14,22 +14,21 @@ export default function CommentForm({
   onRefresh,
 }: CommentFormProps) {
   const [content, setContent] = useState<string>("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const { createComment } = useCommentActions();
 
   const handleSubmit = async () => {
-    if (!content) return;
+    if (!content.trim()) return;
     setLoading(true);
-    const { error } = await supabase.from("comments").insert({
-      post_id: postId,
-      user_id: userId,
-      content,
-    });
-
-    if (!error) {
+    try {
+      await createComment({ post_id: postId, user_id: userId, content });
       setContent("");
       onRefresh();
+    } catch (e) {
+      alert("댓글 작성 중 오류가 발생했습니다.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (

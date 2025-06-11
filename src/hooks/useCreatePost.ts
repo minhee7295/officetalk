@@ -3,14 +3,14 @@ import { supabase } from "@/lib/supabase";
 import { PostFormInput } from "@/inteface/item.interface";
 
 export default function useCreatePost() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const createPost = async (postData: PostFormInput) => {
     setLoading(true);
     setError(null);
 
-    const { title, content, category, image_url, userId } = postData;
+    const { title, content, category, image_url, user_id } = postData;
 
     const { data, error: insertError } = await supabase
       .from("posts")
@@ -19,7 +19,7 @@ export default function useCreatePost() {
         content,
         category,
         image_url,
-        user_id: userId,
+        user_id,
         reg_dt: new Date().toISOString(),
       })
       .select()
