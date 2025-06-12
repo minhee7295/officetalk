@@ -21,7 +21,7 @@ interface UserInfo {
 
 export default function UserList() {
   const [users, setUsers] = useState<UserInfo[]>([]);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState<string>("");
   const [selectedUser, setSelectedUser] = useState<UserInfo | null>(null);
   const [open, setOpen] = useState(false);
   const router = useRouter();

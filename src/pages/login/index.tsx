@@ -1,3 +1,4 @@
+import { SessionUser } from "@/inteface/item.interface";
 import { supabase } from "@/lib/supabase";
 import {
   Box,
@@ -13,12 +14,12 @@ import { useRouter } from "next/router";
 import React, { useState } from "react";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
   const router = useRouter();
 
-  const handleLogin = async () => {
+  const handleLogin = async (): Promise<void> => {
     const pass = sha256(password);
 
     const { data, error } = await supabase
@@ -26,7 +27,7 @@ export default function LoginPage() {
       .select("*")
       .eq("email", email)
       .eq("password", pass)
-      .maybeSingle();
+      .maybeSingle<SessionUser>();
 
     if (error) {
       setError("로그인 중 문제가 발생했습니다.");

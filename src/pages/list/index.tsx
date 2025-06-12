@@ -19,9 +19,9 @@ import PaginationBlock from "@/component/Pagination";
 
 export default function ListPage() {
   const router = useRouter();
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [search, setSearch] = useState<string>("");
+  const [category, setCategory] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   // 쿼리스트링에서 상태 동기화
   useEffect(() => {

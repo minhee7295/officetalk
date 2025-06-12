@@ -1,3 +1,4 @@
+import { IPostData, SessionUser } from "@/inteface/item.interface";
 import { supabase } from "@/lib/supabase";
 import {
   Box,
@@ -15,8 +16,8 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 export default function MyPage() {
-  const [posts, setPosts] = useState<any[]>([]);
-  const [sessionUser, setSessionUser] = useState<any>(null);
+  const [posts, setPosts] = useState<IPostData[]>([]);
+  const [sessionUser, setSessionUser] = useState<SessionUser | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -24,7 +25,12 @@ export default function MyPage() {
     if (!user) {
       router.push("/login");
     } else {
-      setSessionUser(JSON.parse(user));
+      try {
+        const parsed: SessionUser = JSON.parse(user);
+        setSessionUser(parsed);
+      } catch {
+        setSessionUser(null);
+      }
     }
   }, [router]);
 
@@ -38,7 +44,10 @@ export default function MyPage() {
         .eq("user_id", sessionUser.id);
 
       if (!error && data) {
-        const likedPosts = data.map((item) => item.posts);
+        const likedPosts: IPostData[] = data
+          .map((item: any) => item.posts?.[0] ?? item.posts)
+          .filter((post): post is IPostData => post !== undefined);
+
         setPosts(likedPosts);
       }
     };
