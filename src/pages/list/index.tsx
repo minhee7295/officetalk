@@ -10,56 +10,67 @@ import {
   TableBody,
   Paper,
   Typography,
-  Pagination,
   Button,
 } from "@mui/material";
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/router";
+import { IPostData } from "@/inteface/item.interface";
+import { useEffect, useState, useMemo } from "react";
+import PaginationBlock from "@/component/Pagination";
 
 export default function ListPage() {
-  const [page, setPage] = useState<number>(1);
-  const [totalCount, setTotalCount] = useState<number>(0);
-  const [search, setSearch] = useState<string>("");
-  const [category, setCategory] = useState<string>("");
-  const { posts, isLoading, isError } = usePosts(page, search, category);
+  const router = useRouter();
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // 쿼리스트링에서 상태 동기화
+  useEffect(() => {
+    const { search = "", category = "", page = "1" } = router.query;
+
+    setSearch(search as string);
+    setCategory(category as string);
+
+    const parsed = parseInt(page as string, 10);
+    setCurrentPage(!isNaN(parsed) && parsed > 0 ? parsed : 1);
+  }, [router.query]);
+
+  const { posts, isLoading, error, totalCount } = usePosts(
+    currentPage,
+    search,
+    category
+  );
+
+  const totalPages = useMemo(() => Math.ceil(totalCount / 10), [totalCount]);
+
+  const updateQuery = (
+    params: Partial<{ search: string; category: string; page: number }>
+  ) => {
+    router.push({
+      pathname: "/list",
+      query: {
+        ...router.query,
+        ...params,
+      },
+    });
+  };
 
   const handleSearch = (value: string) => {
-    setSearch(value);
+    if (value !== search) {
+      updateQuery({ search: value, page: 1 });
+    }
   };
 
   const handleCategoryChange = (value: string) => {
-    setCategory(value);
+    if (value !== category) {
+      updateQuery({ category: value, page: 1 });
+    }
   };
 
-  const filteredPosts = category
-    ? posts.filter((post) => post.category === category)
-    : posts;
-
-  useEffect(() => {
-    const fetchTotalCount = async () => {
-      let query = supabase
-        .from("posts")
-        .select("*", { count: "exact", head: true });
-
-      if (search) {
-        query = query.or(`title.ilike.%${search}%,content.ilike.%${search}%`);
-      }
-
-      if (category) {
-        query = query.eq("category", category);
-      }
-
-      const { count, error } = await query;
-
-      if (!error && count !== null) setTotalCount(count);
-    };
-
-    fetchTotalCount();
-  }, [search, category]);
-
-  const totalPages = Math.ceil(totalCount / 10);
-  const router = useRouter();
+  const handlePageChange = (page: number) => {
+    if (page !== currentPage) {
+      updateQuery({ page });
+    }
+  };
 
   return (
     <Box sx={{ flexGrow: 1, px: 4, py: 3 }}>
@@ -67,8 +78,8 @@ export default function ListPage() {
 
       {isLoading ? (
         <Typography>불러오는 중...</Typography>
-      ) : isError ? (
-        <Typography color="error">에러 발생</Typography>
+      ) : error ? (
+        <Typography color="error">에러 발생: {error.message}</Typography>
       ) : (
         <>
           <TableContainer component={Paper}>
@@ -81,11 +92,11 @@ export default function ListPage() {
                   <TableCell>작성일</TableCell>
                   <TableCell>댓글</TableCell>
                   <TableCell>좋아요</TableCell>
-                  <TableCell> </TableCell>
+                  <TableCell />
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredPosts.map((post) => (
+                {posts.map((post: IPostData) => (
                   <TableRow key={post.id}>
                     <TableCell>{post.title}</TableCell>
                     <TableCell>{post.category}</TableCell>
@@ -109,16 +120,12 @@ export default function ListPage() {
               </TableBody>
             </Table>
           </TableContainer>
+
           {totalPages > 1 && (
-            <Pagination
-              count={totalPages}
-              page={page}
-              onChange={(_, value) => setPage(value)}
-              color="primary"
-              shape="rounded"
-              showFirstButton
-              showLastButton
-              sx={{ mt: 3, display: "flex", justifyContent: "center" }}
+            <PaginationBlock
+              currentPage={currentPage}
+              onPageChange={handlePageChange}
+              totalCount={totalCount}
             />
           )}
         </>

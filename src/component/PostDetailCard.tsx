@@ -36,6 +36,9 @@ export default function PostDetailCard({
     const confirm = window.confirm("정말 삭제하시겠습니까?");
     if (!confirm) return;
 
+    await supabase.from("comments").delete().eq("post_id", post.id);
+    await supabase.from("likes").delete().eq("post_id", post.id);
+
     const { error } = await supabase.from("posts").delete().eq("id", post.id);
     if (error) return alert("삭제 중 오류 발생");
 
