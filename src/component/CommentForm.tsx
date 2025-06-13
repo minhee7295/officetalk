@@ -24,7 +24,7 @@ export default function CommentForm({
       await createComment({ post_id: postId, user_id: userId, content });
       setContent("");
       onRefresh();
-    } catch (e) {
+    } catch {
       alert("댓글 작성 중 오류가 발생했습니다.");
     } finally {
       setLoading(false);

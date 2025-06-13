@@ -26,7 +26,7 @@ export default function PostTable({ posts }: IPostTable) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {posts.map((post: any) => (
+          {posts.map((post) => (
             <TableRow key={post.id}>
               <TableCell>{post.title}</TableCell>
               <TableCell>{post.category}</TableCell>

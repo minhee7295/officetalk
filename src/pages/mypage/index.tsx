@@ -45,7 +45,7 @@ export default function MyPage() {
 
       if (!error && data) {
         const likedPosts: IPostData[] = data
-          .map((item: any) => item.posts?.[0] ?? item.posts)
+          .map((item) => item.posts?.[0] ?? item.posts)
           .filter((post): post is IPostData => post !== undefined);
 
         setPosts(likedPosts);

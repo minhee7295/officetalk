@@ -25,7 +25,7 @@ export default function usePostDetail(id?: string) {
           .single();
         if (error) throw error;
         setData(data);
-      } catch (err: any) {
+      } catch {
         setError("게시글을 불러오는 데 실패했습니다.");
       } finally {
         setLoading(false);

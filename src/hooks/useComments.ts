@@ -18,8 +18,12 @@ export default function useComments(postId: string) {
 
       if (error) throw error;
       setComments(data ?? []);
-    } catch (e: any) {
-      setError(e.message);
+    } catch (e) {
+      if (e instanceof Error) {
+        setError(e.message);
+      } else {
+        setError("알 수 없는 에러가 발생했습니다.");
+      }
     } finally {
       setLoading(false);
     }
