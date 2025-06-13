@@ -43,7 +43,12 @@ export default function CommentForm({
         onChange={(e) => setContent(e.target.value)}
       />
       <Box display="flex" justifyContent="flex-end" mt={1}>
-        <Button variant="contained" onClick={handleSubmit} disabled={loading}>
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          disabled={loading}
+          color="primary"
+        >
           등록
         </Button>
       </Box>

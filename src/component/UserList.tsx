@@ -86,7 +86,12 @@ export default function UserList() {
           )}
         </DialogContent>
       </Dialog>
-      <Button size="small" onClick={() => router.push("/list")}>
+      <Button
+        size="small"
+        variant="outlined"
+        color="primary"
+        onClick={() => router.push("/list")}
+      >
         뒤로가기
       </Button>
     </Box>

@@ -49,7 +49,12 @@ export default function CommentItem({
         <Typography variant="subtitle2">{comment.users?.nickname}</Typography>
         {isOwner && !editing && (
           <Box display="flex" gap={1}>
-            <Button size="small" onClick={() => setEditing(true)}>
+            <Button
+              size="small"
+              onClick={() => setEditing(true)}
+              color="primary"
+              variant="outlined"
+            >
               수정
             </Button>
             <Button size="small" color="error" onClick={handleDelete}>
@@ -69,7 +74,12 @@ export default function CommentItem({
             sx={{ mt: 1 }}
           />
           <Box display="flex" gap={1} mt={1}>
-            <Button size="small" variant="contained" onClick={handleUpdate}>
+            <Button
+              size="small"
+              variant="contained"
+              onClick={handleUpdate}
+              color="primary"
+            >
               저장
             </Button>
             <Button size="small" onClick={() => setEditing(false)}>

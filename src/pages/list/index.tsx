@@ -109,6 +109,7 @@ export default function ListPage() {
                     <TableCell>
                       <Button
                         variant="outlined"
+                        color="primary"
                         size="small"
                         onClick={() => router.push(`/post/${post.id}`)}
                       >

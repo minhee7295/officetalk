@@ -23,7 +23,7 @@ export interface PostFormInput {
   title: string;
   content: string;
   category: string;
-  image_url?: string;
+  image_url?: string | null;
   user_id: string;
 }
 

@@ -77,7 +77,12 @@ export default function LoginPage() {
               fullWidth
             />
             {error && <Typography color="error">{error}</Typography>}
-            <Button variant="contained" onClick={handleLogin} fullWidth>
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={handleLogin}
+              fullWidth
+            >
               로그인
             </Button>
           </Box>

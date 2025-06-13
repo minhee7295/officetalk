@@ -5,6 +5,7 @@ import {
   MenuItem,
   Typography,
   CircularProgress,
+  CardActions,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import useCategories from "@/hooks/useCategories";
@@ -12,6 +13,8 @@ import { PostFormInput } from "@/inteface/item.interface";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { v4 as uuidv4 } from "uuid";
+import { useRouter } from "next/router";
+import useDeleteImage from "@/hooks/useDeleteImage";
 
 interface FormValues {
   title: string;
@@ -53,6 +56,7 @@ export default function PostForm({
     initialData?.image_url ?? null
   );
   const [uploading, setUploading] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     reset({
@@ -71,6 +75,15 @@ export default function PostForm({
     }
   };
 
+  const deleteImage = useDeleteImage();
+  const handleImageDelete = async () => {
+    if (previewUrl && initialData?.image_url === previewUrl) {
+      await deleteImage(previewUrl);
+    }
+
+    setImageFile(null);
+    setPreviewUrl(null);
+  };
   const uploadImageToSupabase = async (): Promise<string | null> => {
     if (!imageFile) return null;
     setUploading(true);
@@ -105,7 +118,7 @@ export default function PostForm({
     const postData = {
       ...from,
       user_id: userId,
-      image_url: imageUrl ?? undefined,
+      image_url: previewUrl === null ? undefined : (imageUrl ?? undefined),
     };
 
     await onSubmit(postData);
@@ -182,7 +195,19 @@ export default function PostForm({
         <input type="file" accept="image/*" onChange={handleImageChange} />
         {previewUrl && (
           <Box mt={1}>
-            <img src={previewUrl} alt="미리보기" style={{ maxWidth: "100%" }} />
+            <img
+              src={previewUrl}
+              alt="미리보기"
+              style={{ maxWidth: "100%", maxHeight: 300, objectFit: "contain" }}
+            />
+            <Button
+              size="small"
+              variant="outlined"
+              color="secondary"
+              onClick={handleImageDelete}
+            >
+              이미지 삭제
+            </Button>
           </Box>
         )}
         {uploading && <CircularProgress size={24} />}
@@ -190,6 +215,7 @@ export default function PostForm({
 
       <Box mt={2} display="flex" justifyContent="flex-end">
         <Button
+          color="primary"
           variant="contained"
           onClick={handleSubmit(handleFinalSubmit)}
           disabled={loading || uploading}
@@ -197,6 +223,15 @@ export default function PostForm({
           {mode === "create" ? "등록" : "수정"}
         </Button>
       </Box>
+      <CardActions>
+        <Button
+          color="primary"
+          variant="outlined"
+          onClick={() => router.push("/list")}
+        >
+          뒤로가기
+        </Button>
+      </CardActions>
     </Box>
   );
 }

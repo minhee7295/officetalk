@@ -5,7 +5,6 @@ import {
   IconButton,
   Button,
   Box,
-  CardMedia,
   CardActions,
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -18,6 +17,7 @@ import PostActions from "@/component/PostActions";
 import { PostDetail } from "@/hooks/usePostDetail";
 import { SessionUser } from "@/inteface/item.interface";
 import useComments from "@/hooks/useComments";
+import useDeleteImage from "@/hooks/useDeleteImage";
 
 interface PostDetailCardProps {
   post: PostDetail;
@@ -32,9 +32,12 @@ export default function PostDetailCard({
   const likeHook = usePostLike(post.id, sessionUser.id);
   const { comments, loading, error, refresh } = useComments(post.id);
 
+  const deleteImage = useDeleteImage();
   const handleDelete = async () => {
     const confirm = window.confirm("정말 삭제하시겠습니까?");
     if (!confirm) return;
+
+    if (post.image_url) await deleteImage(post.image_url);
 
     await supabase.from("comments").delete().eq("post_id", post.id);
     await supabase.from("likes").delete().eq("post_id", post.id);
@@ -63,12 +66,19 @@ export default function PostDetailCard({
         </Typography>
 
         {post.image_url && (
-          <CardMedia
-            component="img"
-            height="300"
-            image={post.image_url}
-            sx={{ objectFit: "cover" }}
-          />
+          <Box mt={2}>
+            <Box
+              component="img"
+              src={post.image_url}
+              alt="게시글 이미지"
+              sx={{
+                maxWidth: "100%",
+                maxHeight: 300,
+                objectFit: "contain",
+                borderRadius: 1,
+              }}
+            />
+          </Box>
         )}
 
         <Typography>{post.content}</Typography>
@@ -108,7 +118,13 @@ export default function PostDetailCard({
       </CardContent>
 
       <CardActions>
-        <Button onClick={() => router.push("/list")}>뒤로가기</Button>
+        <Button
+          color="primary"
+          variant="outlined"
+          onClick={() => router.push("/list")}
+        >
+          뒤로가기
+        </Button>
       </CardActions>
     </Card>
   );

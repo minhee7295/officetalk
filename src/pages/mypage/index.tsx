@@ -60,7 +60,12 @@ export default function MyPage() {
   return (
     <Box sx={{ p: 4 }}>
       <Box>
-        <Button size="small" onClick={() => router.push("/list")}>
+        <Button
+          color="primary"
+          size="small"
+          variant="outlined"
+          onClick={() => router.push("/list")}
+        >
           뒤로가기
         </Button>
       </Box>
@@ -91,6 +96,7 @@ export default function MyPage() {
                   </TableCell>
                   <TableCell>
                     <Button
+                      color="primary"
                       size="small"
                       onClick={() => router.push(`/post/${post.id}`)}
                     >
