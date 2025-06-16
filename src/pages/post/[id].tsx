@@ -4,6 +4,7 @@ import usePostDetail from "@/hooks/usePostDetail";
 import useSessionUser from "@/hooks/useSessionUser";
 import PostDetailCard from "@/component/PostDetailCard";
 
+// @review 컴포넌트 구조가 [id] 디렉토리가 있으므로 해당 디렉토리의 index.tsx 파일로 작성하는 것이 더 나아보임
 export default function DetailPage() {
   const router = useRouter();
   const { id } = router.query;

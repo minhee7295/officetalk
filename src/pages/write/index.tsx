@@ -11,6 +11,7 @@ export default function WritePage() {
   if (loading) return <div>세션 확인 중...</div>;
   if (!sessionUser) return <div>로그인이 필요합니다.</div>;
 
+  // @review onSubmit 에대한 함수는 hooks로 분류해서 mode에 따라 분기하는게 좋음
   const handleSubmit = async (data: PostFormInput) => {
     const { error } = await supabase.from("posts").insert([data]);
     if (!error) router.push("/list");

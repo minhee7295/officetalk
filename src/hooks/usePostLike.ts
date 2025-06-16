@@ -36,6 +36,7 @@ export default function usePostLike(postId: string, userId?: string) {
         .delete()
         .eq("user_id", userId)
         .eq("post_id", postId);
+      //@review 해당 코드는 그럼 맨처음 가져온 좋아요의 갯수에서만 -1 이되어서 동시성이 가능한건지?
       await supabase
         .from("posts")
         .update({ like_count: likeCount - 1 })

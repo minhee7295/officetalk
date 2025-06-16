@@ -13,6 +13,7 @@ export default function PaginationBlock({
   totalCount,
   perPage = 10,
 }: Props) {
+  // @review 상위에서 totalPages 전달 받고있는데 다시 계산해서 통일할 필요가 있음
   const totalPages = Math.ceil(totalCount / perPage);
 
   return (
