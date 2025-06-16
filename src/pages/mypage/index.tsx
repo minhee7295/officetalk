@@ -96,6 +96,7 @@ export default function MyPage() {
                   </TableCell>
                   <TableCell>
                     <Button
+                      variant="outlined"
                       color="primary"
                       size="small"
                       onClick={() => router.push(`/post/${post.id}`)}

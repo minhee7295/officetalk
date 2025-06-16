@@ -41,6 +41,8 @@ export default function LoginPage() {
 
     sessionStorage.setItem("session-user", JSON.stringify(data));
 
+    document.cookie = `session-user=${encodeURIComponent(JSON.stringify(data))}; path=/`;
+
     if (data.role === "admin") {
       alert("관리자 계정으로 로그인하였습니다.");
     } else {

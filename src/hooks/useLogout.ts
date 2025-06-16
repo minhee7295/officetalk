@@ -9,6 +9,8 @@ export default function useLogout() {
 
     sessionStorage.removeItem("session-user");
 
+    document.cookie = "session-user=; Max-Age=0; path=/";
+
     router.push("/login");
   };
 
