@@ -13,6 +13,7 @@ interface IPostTable {
   posts: IPostData[];
 }
 
+// @review 만들어 놓고 안쓰고있음
 export default function PostTable({ posts }: IPostTable) {
   return (
     <TableContainer component={Paper}>

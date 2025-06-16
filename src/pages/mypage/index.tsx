@@ -20,7 +20,9 @@ export default function MyPage() {
   const [sessionUser, setSessionUser] = useState<SessionUser | null>(null);
   const router = useRouter();
 
+  // @review 로그인세션가져오는 공통 훅 있으므로 해당 코드사용
   useEffect(() => {
+    // @review 로그인으로 보내는건 미들웨어에서 처리
     const user = sessionStorage.getItem("session-user");
     if (!user) {
       router.push("/login");
@@ -55,6 +57,9 @@ export default function MyPage() {
     fetchLikedPosts();
   }, [sessionUser]);
 
+  /* @review 해당 코드가 바로 위에 useEffect위에 있어야 패칭을 한번 덜 하고 가지 않을까? 
+    첫번쨰 useEffect 아래 가는게 더 적절한 코드 또한 어차피 sessionUser가 없으면 login으로 가게됨    
+  */
   if (!sessionUser) return null;
 
   return (

@@ -8,6 +8,7 @@ import theme from "../theme/index";
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
+      {/* @review head 태그는 _document.tsx에서 설정하는게 더 나아보임 */}
       <Head>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>

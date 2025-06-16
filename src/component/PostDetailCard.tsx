@@ -18,7 +18,9 @@ import { PostDetail } from "@/hooks/usePostDetail";
 import { SessionUser } from "@/inteface/item.interface";
 import useComments from "@/hooks/useComments";
 import useDeleteImage from "@/hooks/useDeleteImage";
+import Image from "next/image";
 
+// @review 관심사 분리를 위해 interface를 따로 분리하는게 좋음
 interface PostDetailCardProps {
   post: PostDetail;
   sessionUser: SessionUser;
@@ -33,6 +35,8 @@ export default function PostDetailCard({
   const { comments, loading, error, refresh } = useComments(post.id);
 
   const deleteImage = useDeleteImage();
+
+  // @review 해당 함수는 useCallback으로 감싸는게 좋음 또한 hooks로 분리하는게 좋음
   const handleDelete = async () => {
     const confirm = window.confirm("정말 삭제하시겠습니까?");
     if (!confirm) return;
@@ -67,7 +71,20 @@ export default function PostDetailCard({
 
         {post.image_url && (
           <Box mt={2}>
-            <Box
+            {/* @review MUI Box 컴포넌트 대신 Next.js의 Image 컴포넌트를 사용하여 이미지 최적화 next.config.ts 에 설정 추가해야함 */}
+            <Image
+              src={post.image_url}
+              alt="게시글 이미지"
+              width={600}
+              height={300}
+              style={{
+                maxWidth: "100%",
+                maxHeight: 300,
+                objectFit: "contain",
+                borderRadius: "8px",
+              }}
+            />
+            {/* <Box
               component="img"
               src={post.image_url}
               alt="게시글 이미지"
@@ -77,7 +94,7 @@ export default function PostDetailCard({
                 objectFit: "contain",
                 borderRadius: 1,
               }}
-            />
+            /> */}
           </Box>
         )}
 

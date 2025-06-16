@@ -19,6 +19,7 @@ interface UserInfo {
   email: string;
 }
 
+// @review 사용자를 다불러오면 사용성은? 페이징처리 없음 list처럼 url 쿼리로 페이지네이션을 구현하는게 좋음
 export default function UserList() {
   const [users, setUsers] = useState<UserInfo[]>([]);
   const [search, setSearch] = useState<string>("");
@@ -26,6 +27,7 @@ export default function UserList() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
+  // @review 전체 사용자 가져오면 성능적 문제가 있을 수 있음
   useEffect(() => {
     const fetchUsers = async () => {
       const { data, error } = await supabase
@@ -68,6 +70,7 @@ export default function UserList() {
         ))}
       </List>
 
+      {/* @review 컴포넌트 분리하는게 좋음 */}
       <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogTitle>유저 정보</DialogTitle>
         <DialogContent>

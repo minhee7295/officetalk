@@ -22,6 +22,10 @@ interface FormValues {
   content: string;
 }
 
+/* 
+  @review 여기서 mode의 기능이 모호함 initialData가 있을때는 edit로, 없을때는 create로 처리하는게 좋음
+  코드내에 const isEditMode = !!initialData; 와 같이 변수를 만들어서 사용하면 가독성이 좋아짐
+*/
 interface PostFormProps {
   mode: "create" | "edit";
   userId: string;
@@ -30,6 +34,7 @@ interface PostFormProps {
   loading?: boolean;
 }
 
+// @review 컴포넌트가 너무 길어지면 가독성이 떨어지므로 각 기능별로 컴포넌트를 분리하는게 좋음 예를들어 이미지 업로드 컴포넌트, 폼 컴포넌트 등으로 나누는것이 좋음
 export default function PostForm({
   mode,
   userId,
@@ -195,11 +200,13 @@ export default function PostForm({
         <input type="file" accept="image/*" onChange={handleImageChange} />
         {previewUrl && (
           <Box mt={1}>
+            {/* nextjs 에서는 Image 를 사용해서 이미지 최적화 필요 */}
             <img
               src={previewUrl}
               alt="미리보기"
               style={{ maxWidth: "100%", maxHeight: 300, objectFit: "contain" }}
             />
+            {/* @review 이미지 삭제하고 저장하면 이미지 디비에서는 삭제안되서 남아있음 */}
             <Button
               size="small"
               variant="outlined"
