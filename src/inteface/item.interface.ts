@@ -35,6 +35,7 @@ export interface HeaderProps {
 export interface SessionUser {
   id: string;
   email: string;
+  password: string;
   nickname: string;
   role: "user" | "admin";
 }

@@ -14,73 +14,69 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/router";
 import { IPostData } from "@/inteface/item.interface";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import PaginationBlock from "@/component/Pagination";
 
 export default function ListPage() {
   const router = useRouter();
-  const [search, setSearch] = useState<string>("");
-  const [category, setCategory] = useState<string>("");
-  const [currentPage, setCurrentPage] = useState<number>(1);
-
-  // 쿼리스트링에서 상태 동기화
-  useEffect(() => {
-    const { search = "", category = "", page = "1" } = router.query;
-
-    setSearch(search as string);
-    setCategory(category as string);
-
+  const { search = "", category = "", page = "1" } = router.query;
+  const currentPage = useMemo(() => {
     const parsed = parseInt(page as string, 10);
-    setCurrentPage(!isNaN(parsed) && parsed > 0 ? parsed : 1);
-  }, [router.query]);
+    return !isNaN(parsed) && parsed > 0 ? parsed : 1;
+  }, [page]);
 
   const { posts, isLoading, error, totalCount } = usePosts(
     currentPage,
-    search,
-    category
+    search as string,
+    category as string
   );
 
   const totalPages = useMemo(() => Math.ceil(totalCount / 10), [totalCount]);
 
-  const updateQuery = (
-    params: Partial<{ search: string; category: string; page: number }>
-  ) => {
-    router.push({
-      pathname: "/list",
-      query: {
-        ...router.query,
-        ...params,
-      },
-    });
-  };
+  const updateQuery = useCallback(
+    (params: Partial<{ search: string; category: string; page: number }>) => {
+      router.push({
+        pathname: "/list",
+        query: {
+          ...router.query,
+          ...params,
+        },
+      });
+    },
+    [router]
+  );
 
-  const handleSearch = (value: string) => {
-    if (value !== search) {
-      updateQuery({ search: value, page: 1 });
-    }
-  };
+  const handleQueryChange = useCallback(
+    (key: "search" | "category" | "page", value: string | number) => {
+      const currentValue = router.query[key]?.toString();
+      const newValue = key === "page" ? Number(value) : value.toString();
 
-  const handleCategoryChange = (value: string) => {
-    if (value !== category) {
-      updateQuery({ category: value, page: 1 });
-    }
-  };
-
-  const handlePageChange = (page: number) => {
-    if (page !== currentPage) {
-      updateQuery({ page });
-    }
-  };
+      if (currentValue !== newValue.toString()) {
+        updateQuery({
+          [key]: newValue,
+          page: key !== "page" ? 1 : (newValue as number),
+        });
+      }
+    },
+    [router.query, updateQuery]
+  );
 
   return (
     <Box sx={{ flexGrow: 1, px: 4, py: 3 }}>
-      <Header onSearch={handleSearch} onCategoryChange={handleCategoryChange} />
+      <Header
+        onSearch={(value) => handleQueryChange("search", value)}
+        onCategoryChange={(value) => handleQueryChange("category", value)}
+      />
 
-      {isLoading ? (
-        <Typography>불러오는 중...</Typography>
-      ) : error ? (
+      {isLoading && <Typography>불러오는 중...</Typography>}
+      {!isLoading && error && (
         <Typography color="error">에러 발생: {error.message}</Typography>
-      ) : (
+      )}
+      {!isLoading && !error && posts.length === 0 && (
+        <Typography>게시글이 없습니다.</Typography>
+      )}
+
+      {!isLoading && !error && posts.length > 0 && (
         <>
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }}>
@@ -125,7 +121,7 @@ export default function ListPage() {
           {totalPages > 1 && (
             <PaginationBlock
               currentPage={currentPage}
-              onPageChange={handlePageChange}
+              onPageChange={(page) => handleQueryChange("page", page)}
               totalCount={totalCount}
             />
           )}
