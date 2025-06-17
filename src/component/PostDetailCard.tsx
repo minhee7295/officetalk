@@ -14,15 +14,11 @@ import usePostLike from "@/hooks/usePostLike";
 import CommentList from "@/component/CommentList";
 import CommentForm from "@/component/CommentForm";
 import PostActions from "@/component/PostActions";
-import { PostDetail } from "@/hooks/usePostDetail";
-import { SessionUser } from "@/inteface/item.interface";
 import useComments from "@/hooks/useComments";
 import useDeleteImage from "@/hooks/useDeleteImage";
-
-interface PostDetailCardProps {
-  post: PostDetail;
-  sessionUser: SessionUser;
-}
+import { PostDetailCardProps } from "@/inteface/item.interface";
+import { useCallback } from "react";
+import Image from "next/image";
 
 export default function PostDetailCard({
   post,
@@ -31,23 +27,26 @@ export default function PostDetailCard({
   const router = useRouter();
   const likeHook = usePostLike(post.id, sessionUser.id);
   const { comments, loading, error, refresh } = useComments(post.id);
-
   const deleteImage = useDeleteImage();
-  const handleDelete = async () => {
-    const confirm = window.confirm("정말 삭제하시겠습니까?");
-    if (!confirm) return;
 
-    if (post.image_url) await deleteImage(post.image_url);
+  const handleDelete = useCallback(async () => {
+    const confirmDelete = window.confirm("정말 삭제하시겠습니까?");
+    if (!confirmDelete) return;
 
-    await supabase.from("comments").delete().eq("post_id", post.id);
-    await supabase.from("likes").delete().eq("post_id", post.id);
+    try {
+      if (post.image_url) await deleteImage(post.image_url);
+      await supabase.from("comments").delete().eq("post_id", post.id);
+      await supabase.from("likes").delete().eq("post_id", post.id);
+      const { error } = await supabase.from("posts").delete().eq("id", post.id);
+      if (error) throw error;
 
-    const { error } = await supabase.from("posts").delete().eq("id", post.id);
-    if (error) return alert("삭제 중 오류 발생");
-
-    alert("삭제되었습니다.");
-    router.push("/list");
-  };
+      alert("삭제되었습니다.");
+      router.push("/list");
+    } catch (err) {
+      console.error("삭제 중 오류:", err);
+      alert("삭제 중 오류 발생");
+    }
+  }, [post.id, post.image_url, deleteImage, router]);
 
   return (
     <Card
@@ -67,15 +66,17 @@ export default function PostDetailCard({
 
         {post.image_url && (
           <Box mt={2}>
-            <Box
-              component="img"
+            {/* @review MUI Box 컴포넌트 대신 Next.js의 Image 컴포넌트를 사용하여 이미지 최적화 next.config.ts 에 설정 추가해야함 */}
+            <Image
               src={post.image_url}
               alt="게시글 이미지"
-              sx={{
+              width={600}
+              height={300}
+              style={{
                 maxWidth: "100%",
                 maxHeight: 300,
                 objectFit: "contain",
-                borderRadius: 1,
+                borderRadius: "8px",
               }}
             />
           </Box>

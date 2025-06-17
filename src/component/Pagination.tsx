@@ -3,18 +3,14 @@ import { Pagination } from "@mui/material";
 interface Props {
   currentPage: number;
   onPageChange: (page: number) => void;
-  totalCount: number;
-  perPage?: number;
+  totalPages: number;
 }
 
 export default function PaginationBlock({
   currentPage,
   onPageChange,
-  totalCount,
-  perPage = 10,
+  totalPages,
 }: Props) {
-  const totalPages = Math.ceil(totalCount / perPage);
-
   return (
     <Pagination
       count={totalPages}

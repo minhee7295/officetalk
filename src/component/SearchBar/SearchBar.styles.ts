@@ -1,13 +1,7 @@
-import React, { useEffect, useState } from "react";
 import { styled, alpha } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
-import SearchIcon from "@mui/icons-material/Search";
 
-interface SearchBarProps {
-  onSearch: (value: string) => void;
-}
-
-const Search = styled("div")(({ theme }) => ({
+export const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
   backgroundColor: alpha(theme.palette.common.white, 0.15),
@@ -22,7 +16,7 @@ const Search = styled("div")(({ theme }) => ({
   },
 }));
 
-const SearchIconWrapper = styled("div")(({ theme }) => ({
+export const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
   height: "100%",
   position: "absolute",
@@ -32,7 +26,7 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
   justifyContent: "center",
 }));
 
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
+export const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",
   width: "100%",
   "& .MuiInputBase-input": {
@@ -47,29 +41,3 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
   },
 }));
-
-export default function SearchBar({ onSearch }: SearchBarProps) {
-  const [input, setInput] = useState<string>("");
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      onSearch(input);
-    }, 500); // 0.5초
-
-    return () => clearTimeout(timer); // 입력할때 호출 x
-  }, [input, onSearch]);
-
-  return (
-    <Search>
-      <SearchIconWrapper>
-        <SearchIcon />
-      </SearchIconWrapper>
-      <StyledInputBase
-        placeholder="Search…"
-        inputProps={{ "aria-label": "search" }}
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-      />
-    </Search>
-  );
-}

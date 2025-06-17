@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 import { sha256 } from "js-sha256";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
 export default function LoginPage() {

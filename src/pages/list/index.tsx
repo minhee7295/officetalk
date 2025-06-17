@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/router";
 import { IPostData } from "@/inteface/item.interface";
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useMemo, useCallback } from "react";
 import PaginationBlock from "@/component/Pagination";
 
 export default function ListPage() {
@@ -122,7 +122,7 @@ export default function ListPage() {
             <PaginationBlock
               currentPage={currentPage}
               onPageChange={(page) => handleQueryChange("page", page)}
-              totalCount={totalCount}
+              totalPages={totalCount}
             />
           )}
         </>

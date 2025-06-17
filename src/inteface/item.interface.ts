@@ -1,3 +1,5 @@
+import { PostDetail } from "@/hooks/usePostDetail";
+
 export interface IPostData {
   id: string;
   title: string;
@@ -27,6 +29,22 @@ export interface PostFormInput {
   user_id: string;
 }
 
+export interface FormValues {
+  title: string;
+  category: string;
+  content: string;
+}
+
+// react-hook-form 관련 props 타입
+import { Control, FieldErrors } from "react-hook-form";
+
+export interface FormProps {
+  control: Control<FormValues>;
+  errors: FieldErrors<FormValues>;
+  categories: string[];
+  categoryLoading: boolean;
+}
+
 export interface HeaderProps {
   onSearch: (v: string) => void;
   onCategoryChange: (v: string) => void;
@@ -38,4 +56,9 @@ export interface SessionUser {
   password: string;
   nickname: string;
   role: "user" | "admin";
+}
+
+export interface PostDetailCardProps {
+  post: PostDetail;
+  sessionUser: SessionUser;
 }

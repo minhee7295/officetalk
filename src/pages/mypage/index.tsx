@@ -1,4 +1,5 @@
-import { IPostData, SessionUser } from "@/inteface/item.interface";
+import useSessionUser from "@/hooks/useSessionUser";
+import { IPostData } from "@/inteface/item.interface";
 import { supabase } from "@/lib/supabase";
 import {
   Box,
@@ -17,27 +18,13 @@ import { useEffect, useState } from "react";
 
 export default function MyPage() {
   const [posts, setPosts] = useState<IPostData[]>([]);
-  const [sessionUser, setSessionUser] = useState<SessionUser | null>(null);
+  const { user: sessionUser } = useSessionUser();
   const router = useRouter();
 
   useEffect(() => {
-    const user = sessionStorage.getItem("session-user");
-    if (!user) {
-      router.push("/login");
-    } else {
-      try {
-        const parsed: SessionUser = JSON.parse(user);
-        setSessionUser(parsed);
-      } catch {
-        setSessionUser(null);
-      }
-    }
-  }, [router]);
+    if (!sessionUser?.id) return;
 
-  useEffect(() => {
     const fetchLikedPosts = async () => {
-      if (!sessionUser?.id) return;
-
       const { data, error } = await supabase
         .from("likes")
         .select("post_id, posts(*)")
