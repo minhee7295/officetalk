@@ -66,7 +66,6 @@ export default function PostDetailCard({
 
         {post.image_url && (
           <Box mt={2}>
-            {/* @review MUI Box 컴포넌트 대신 Next.js의 Image 컴포넌트를 사용하여 이미지 최적화 next.config.ts 에 설정 추가해야함 */}
             <Image
               src={post.image_url}
               alt="게시글 이미지"

@@ -25,7 +25,7 @@ export default function ListPage() {
     return !isNaN(parsed) && parsed > 0 ? parsed : 1;
   }, [page]);
 
-  const { posts, isLoading, error, totalCount } = usePosts(
+  const { posts, isLoading, isError, totalCount } = usePosts(
     currentPage,
     search as string,
     category as string
@@ -69,14 +69,14 @@ export default function ListPage() {
       />
 
       {isLoading && <Typography>불러오는 중...</Typography>}
-      {!isLoading && error && (
-        <Typography color="error">에러 발생: {error.message}</Typography>
+      {!isLoading && isError && (
+        <Typography color="error">에러 발생: {isError.message}</Typography>
       )}
-      {!isLoading && !error && posts.length === 0 && (
+      {!isLoading && !isError && posts.length === 0 && (
         <Typography>게시글이 없습니다.</Typography>
       )}
 
-      {!isLoading && !error && posts.length > 0 && (
+      {!isLoading && !isError && posts.length > 0 && (
         <>
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }}>

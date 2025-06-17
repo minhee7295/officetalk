@@ -17,6 +17,7 @@
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/supabase-js": "^2.49.8",
     "axios": "^1.9.0",
+    "js-cookie": "^3.0.5",
     "js-sha256": "^0.11.1",
     "next": "15.3.2",
     "react": "^19.0.0",
@@ -27,6 +28,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^20",
     "@types/react": "^19.1.6",
     "@types/react-dom": "^19",

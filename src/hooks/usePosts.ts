@@ -10,13 +10,13 @@ export default function usePosts(
 ) {
   const [posts, setPosts] = useState<IPostData[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
-  const [isLoading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isError, setIsError] = useState<Error | null>(null);
 
   useEffect(() => {
     const fetchPosts = async () => {
-      setLoading(true);
-      setError(null);
+      setIsLoading(true);
+      setIsError(null);
 
       try {
         const from = (page - 1) * 10;
@@ -38,7 +38,10 @@ export default function usePosts(
 
         const { data, count, error } = await query;
 
-        if (error) throw error;
+        if (error) {
+          setIsError(error);
+          return;
+        }
 
         const mapped: IPostData[] = (data ?? []).map((post) => ({
           ...post,
@@ -49,15 +52,14 @@ export default function usePosts(
         setPosts(mapped);
         setTotalCount(count ?? 0);
       } catch (err) {
-        console.error(err);
-        setError(error);
+        setIsError(err as Error);
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
     fetchPosts();
-  }, [page, search, category]);
+  }, [page, search, category, isError]);
 
-  return { posts, totalCount, isLoading, error };
+  return { posts, totalCount, isLoading, isError };
 }
